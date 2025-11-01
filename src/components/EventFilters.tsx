@@ -1,5 +1,5 @@
 // src/components/EventFilters.tsx
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Box,
   Typography,
@@ -9,12 +9,14 @@ import {
   Collapse,
   IconButton,
   TextField,
-  Autocomplete // Importado desde @mui/material
+  Autocomplete
 } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { EventFilterParams } from '../types'
 import {
-  LOCATION_OPTIONS,
+  LOCATION_DATA, // <-- Objeto con la relación Comunidad-Ciudades
+  AUTONOMOUS_COMMUNITIES, // <-- Lista de Comunidades
+  ALL_CITIES, // <-- Lista de TODAS las ciudades
   CYBERSECURITY_TAGS,
   EVENT_LEVELS
 } from '../constants/filters'
@@ -31,29 +33,82 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
   onFilterChange,
   initialFilters
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [filters, setFilters] = useState<EventFilterParams>(initialFilters)
+  const [isOpen, setIsOpen] = useState(false) // Mantenemos el colapso por defecto
+
+  // Estado para los filtros de Nivel y Tags (sin cambios)
+  const [levels, setLevels] = useState<string[]>(initialFilters.levels)
+  const [tags, setTags] = useState<string[]>(initialFilters.tags)
+  const [dates, setDates] = useState({
+    startDate: initialFilters.startDate,
+    endDate: initialFilters.endDate
+  })
+
+  // --- NUEVO ESTADO PARA LOCALIZACIONES ---
+  const [selectedCommunities, setSelectedCommunities] = useState<string[]>([])
+  const [selectedCities, setSelectedCities] = useState<string[]>([])
+  const [availableCities, setAvailableCities] = useState<string[]>(ALL_CITIES)
+  // --- FIN NUEVO ESTADO ---
 
   const handleToggle = () => setIsOpen(!isOpen)
 
   const handleDateChange =
     (field: 'startDate' | 'endDate') => (date: Date | null) => {
-      setFilters((prev) => ({ ...prev, [field]: date }))
+      setDates((prev) => ({ ...prev, [field]: date }))
     }
 
+  // --- NUEVOS HANDLERS DE LOCALIZACIÓN ---
+  const handleCommunityChange = (
+    event: React.SyntheticEvent,
+    value: string[]
+  ) => {
+    setSelectedCommunities(value)
+
+    if (value.length > 0) {
+      // Si se selecciona al menos una comunidad, filtramos las ciudades
+      const citiesFromSelectedCommunities = value.flatMap(
+        (community) => LOCATION_DATA[community] || []
+      )
+      setAvailableCities([...new Set(citiesFromSelectedCommunities)].sort())
+
+      // Limpiamos las ciudades seleccionadas que no pertenezan a la nueva lista
+      setSelectedCities((prevCities) =>
+        prevCities.filter((city) =>
+          citiesFromSelectedCommunities.includes(city)
+        )
+      )
+    } else {
+      // Si no hay comunidades seleccionadas, mostramos todas las ciudades
+      setAvailableCities(ALL_CITIES)
+    }
+  }
+
+  const handleCityChange = (event: React.SyntheticEvent, value: string[]) => {
+    setSelectedCities(value)
+  }
+  // --- FIN NUEVOS HANDLERS ---
+
   const handleMultiSelectChange =
-    (field: 'tags' | 'locations' | 'levels') =>
+    (setter: React.Dispatch<React.SetStateAction<string[]>>) =>
     (event: React.SyntheticEvent, value: string[]) => {
-      // Corregido a string[]
-      setFilters((prev) => ({ ...prev, [field]: value }))
+      setter(value)
     }
 
   const handleApplyFilters = () => {
-    onFilterChange(filters)
+    // Combinamos comunidades y ciudades en el array 'locations'
+    const allLocations = [
+      ...new Set([...selectedCommunities, ...selectedCities])
+    ]
+
+    onFilterChange({
+      startDate: dates.startDate,
+      endDate: dates.endDate,
+      tags: tags,
+      locations: allLocations,
+      levels: levels
+    })
   }
 
   const handleClearFilters = () => {
-    // --- CORREGIDO: Añadido '[]' a los arrays ---
     const clearedFilters: EventFilterParams = {
       startDate: null,
       endDate: null,
@@ -61,8 +116,15 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
       locations: [],
       levels: []
     }
-    // --- FIN CORREGIDO ---
-    setFilters(clearedFilters)
+    // Reseteamos todos los estados locales
+    setDates({ startDate: null, endDate: null })
+    setTags([])
+    setLevels([])
+    setSelectedCommunities([])
+    setSelectedCities([])
+    setAvailableCities(ALL_CITIES)
+
+    // Enviamos los filtros limpios
     onFilterChange(clearedFilters)
   }
 
@@ -100,11 +162,9 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
           <Grid container spacing={3}>
             {/* Filtro de Fechas */}
             <Grid item size={{ xs: 12, md: 6 }}>
-              {' '}
-              {/* 'item' añadido */}
               <DatePicker
                 label='Desde'
-                value={filters.startDate}
+                value={dates.startDate}
                 onChange={handleDateChange('startDate')}
                 sx={{ width: '100%' }}
               />
@@ -112,32 +172,44 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
             <Grid item size={{ xs: 12, md: 6 }}>
               <DatePicker
                 label='Hasta'
-                value={filters.endDate}
+                value={dates.endDate}
                 onChange={handleDateChange('endDate')}
                 sx={{ width: '100%' }}
               />
             </Grid>
 
-            {/* Filtro de Localización */}
-            <Grid item size={{ xs: 12 }}>
+            {/* --- FILTRO DE LOCALIZACIÓN MODIFICADO --- */}
+            <Grid item size={{ xs: 12, md: 6 }}>
               <Autocomplete
                 multiple
-                options={LOCATION_OPTIONS}
-                value={filters.locations}
-                onChange={handleMultiSelectChange('locations')}
+                options={AUTONOMOUS_COMMUNITIES}
+                value={selectedCommunities}
+                onChange={handleCommunityChange}
                 renderInput={(params) => (
-                  <TextField {...params} label='Localización' />
+                  <TextField {...params} label='Comunidad Autónoma' />
                 )}
               />
             </Grid>
+            <Grid item size={{ xs: 12, md: 6 }}>
+              <Autocomplete
+                multiple
+                options={availableCities}
+                value={selectedCities}
+                onChange={handleCityChange}
+                renderInput={(params) => (
+                  <TextField {...params} label='Ciudad' />
+                )}
+              />
+            </Grid>
+            {/* --- FIN FILTRO LOCALIZACIÓN --- */}
 
             {/* Filtro de Tags */}
             <Grid item size={{ xs: 12 }}>
               <Autocomplete
                 multiple
                 options={CYBERSECURITY_TAGS}
-                value={filters.tags}
-                onChange={handleMultiSelectChange('tags')}
+                value={tags}
+                onChange={handleMultiSelectChange(setTags)}
                 renderInput={(params) => (
                   <TextField {...params} label='Categorías / Tags' />
                 )}
@@ -149,8 +221,8 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
               <Autocomplete
                 multiple
                 options={EVENT_LEVELS}
-                value={filters.levels}
-                onChange={handleMultiSelectChange('levels')}
+                value={levels}
+                onChange={handleMultiSelectChange(setLevels)}
                 renderInput={(params) => (
                   <TextField {...params} label='Nivel del Evento' />
                 )}
@@ -171,7 +243,17 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
               <Button variant='outlined' onClick={handleClearFilters}>
                 Limpiar Filtros
               </Button>
-              <Button variant='contained' onClick={handleApplyFilters}>
+              <Button
+                variant='contained'
+                onClick={handleApplyFilters}
+                sx={{
+                  // Aplicamos el estilo unificado de botón
+                  background: 'var(--gradient-button-primary)',
+                  '&:hover': {
+                    background: 'var(--gradient-button-primary-hover)'
+                  }
+                }}
+              >
                 Aplicar Filtros
               </Button>
             </Grid>
