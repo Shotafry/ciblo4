@@ -5,28 +5,27 @@ import { Box, Typography, Button, Chip, Divider } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { Event } from '../types'
 import L from 'leaflet' // Importamos Leaflet para el icono
-import markerIconPng from '/cyberLogo-gigapixel-art-scale-2-00x-godpix-12@2x.png' // Importamos el logo
+// import markerIconPng from '/cyberLogo-gigapixel-art-scale-2-00x-godpix-12@2x.png' // <-- ELIMINADO
 
-// Iconos para el popup (look tecnológico)
+// Iconos para el popup
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import GroupIcon from '@mui/icons-material/Group'
 
-// --- NUEVO: Icono de chincheta personalizado ---
-// Usamos el logo circular que ya tienes en la carpeta /public
-const customMarkerIcon = L.icon({
-  iconUrl: markerIconPng,
-  iconSize: [32, 32], // Tamaño del icono (ancho, alto)
-  iconAnchor: [16, 32], // Punto del icono que anclamos al mapa (centro-abajo)
-  popupAnchor: [0, -32] // Dónde se abre el popup en relación al ancla
+// --- MODIFICADO: Icono de chincheta personalizado ---
+// Usamos un L.divIcon para crear un marcador con CSS (el que definimos en global.css)
+const customMarkerIcon = L.divIcon({
+  className: 'leaflet-pulsing-icon', // <-- Esta es la clase que crea la onda
+  iconSize: [16, 16], // Tamaño del icono
+  iconAnchor: [8, 8], // Centro del icono
+  popupAnchor: [0, -10] // Dónde se abre el popup
 })
 
-// --- NUEVO: Componente interno para el contenido del Popup ---
-// Aquí creamos tu diseño "guapo" y tecnológico
+// --- SIN CAMBIOS: Componente interno para el contenido del Popup ---
+// Este es tu diseño "guapo" y se mantiene 100% igual
 const EventPopupContent: React.FC<{ event: Event }> = ({ event }) => {
   const navigate = useNavigate()
   const handleNavigate = () => {
-    // Usamos el slug para navegar a la página del evento
     navigate(`/eventos/${event.slug}`)
   }
 
@@ -40,7 +39,7 @@ const EventPopupContent: React.FC<{ event: Event }> = ({ event }) => {
 
   return (
     <Box sx={{ width: 300, p: 1, fontFamily: 'Inter, sans-serif' }}>
-      {/* 1. Título del Evento (en grande y cian) */}
+      {/* 1. Título */}
       <Typography
         variant='h6'
         component='h3'
@@ -49,7 +48,7 @@ const EventPopupContent: React.FC<{ event: Event }> = ({ event }) => {
         {event.title}
       </Typography>
 
-      {/* 2. Info Rápida (Fecha, Ubicación, Asistentes) */}
+      {/* 2. Info Rápida */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
         <CalendarTodayIcon sx={{ fontSize: 18, color: 'var(--Gray-700)' }} />
         <Typography variant='body2'>{formatDate(event.start_date)}</Typography>
@@ -79,7 +78,7 @@ const EventPopupContent: React.FC<{ event: Event }> = ({ event }) => {
         {event.short_desc}
       </Typography>
 
-      {/* 4. Tags (limitado a 3 para que quepan) */}
+      {/* 4. Tags */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
         {event.tags.slice(0, 3).map((tag) => (
           <Chip
@@ -116,7 +115,6 @@ const EventPopupContent: React.FC<{ event: Event }> = ({ event }) => {
 
 // --- COMPONENTE PRINCIPAL DEL MAPA (Modificado) ---
 export const EventMap: React.FC<EventMapProps> = ({ events }) => {
-  // Centramos el mapa en España
   const mapCenter: [number, number] = [40.416775, -3.70379]
 
   return (
@@ -142,24 +140,21 @@ export const EventMap: React.FC<EventMapProps> = ({ events }) => {
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         />
 
-        {/* Iteramos sobre los eventos y creamos un marcador para cada uno */}
         {events.map((event) => {
-          // Solo mostramos eventos con coordenadas (no online)
           if (event.latitude && event.longitude) {
             return (
               <Marker
                 key={event.id}
                 position={[event.latitude, event.longitude]}
-                icon={customMarkerIcon} // <-- USAMOS EL ICONO PERSONALIZADO
+                icon={customMarkerIcon} // <-- USAMOS EL NUEVO ICONO PULSANTE
               >
                 <Popup>
-                  {/* USAMOS EL COMPONENTE PERSONALIZADO */}
                   <EventPopupContent event={event} />
                 </Popup>
               </Marker>
             )
           }
-          return null // No renderizar marcador para eventos online
+          return null
         })}
       </MapContainer>
     </Box>
