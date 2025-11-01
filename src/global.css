@@ -210,35 +210,4 @@ body {
   --ls-normal: normal;
 
   /* ... (todo tu CSS anterior se mantiene igual) ... */
-
-  /* --- NUEVO: Icono de Mapa Pulsante --- */
-
-  /* Define la animación de la "onda" */
-  @keyframes pulse {
-    0% {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 0 rgba(79, 186, 200, 0.7); /* color: --color-cadetblue */
-    }
-    70% {
-      transform: scale(1);
-      box-shadow: 0 0 0 10px rgba(79, 186, 200, 0);
-    }
-    100% {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 0 rgba(79, 186, 200, 0);
-    }
-  }
-
-  /* Estilo para el icono del marcador */
-  .leaflet-pulsing-icon {
-    background-color: var(--color-cadetblue);
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    box-shadow: 0 0 0 0 rgba(79, 186, 200, 1);
-    transform: scale(1);
-    /* Aplica la animación */
-    animation: pulse 2s infinite;
-  }
 }

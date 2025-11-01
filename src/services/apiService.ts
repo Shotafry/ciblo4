@@ -186,6 +186,7 @@ export const unsubscribeFromEvent = (
   return new Promise((resolve) => {
     setTimeout(() => {
       mockUsers = mockUsers.map((user) => {
+        // 1. Modificamos la lista de favoritos del usuario
         if (user.id === userId) {
           return {
             ...user,
@@ -196,6 +197,12 @@ export const unsubscribeFromEvent = (
         }
         return user
       })
+      // --- NUEVO ARREGLO: Decrementar el contador de asistentes del evento ---
+      const eventIndex = mockEvents.findIndex((e) => e.id === eventId)
+      if (eventIndex !== -1 && mockEvents[eventIndex].current_attendees > 0) {
+        mockEvents[eventIndex].current_attendees -= 1
+      }
+      // --- FIN NUEVO ARREGLO ---
       console.log(
         `Usuario ${userId} ha cancelado suscripción al evento ${eventId}`
       )
