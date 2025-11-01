@@ -1,13 +1,120 @@
 // src/components/EventMap.tsx
 import React from 'react'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, Button, Chip, Divider } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import { Event } from '../types'
+import L from 'leaflet' // Importamos Leaflet para el icono
+import markerIconPng from '/cyberLogo-gigapixel-art-scale-2-00x-godpix-12@2x.png' // Importamos el logo
 
-interface EventMapProps {
-  events: Event[]
+// Iconos para el popup (look tecnológico)
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
+import GroupIcon from '@mui/icons-material/Group'
+
+// --- NUEVO: Icono de chincheta personalizado ---
+// Usamos el logo circular que ya tienes en la carpeta /public
+const customMarkerIcon = L.icon({
+  iconUrl: markerIconPng,
+  iconSize: [32, 32], // Tamaño del icono (ancho, alto)
+  iconAnchor: [16, 32], // Punto del icono que anclamos al mapa (centro-abajo)
+  popupAnchor: [0, -32] // Dónde se abre el popup en relación al ancla
+})
+
+// --- NUEVO: Componente interno para el contenido del Popup ---
+// Aquí creamos tu diseño "guapo" y tecnológico
+const EventPopupContent: React.FC<{ event: Event }> = ({ event }) => {
+  const navigate = useNavigate()
+  const handleNavigate = () => {
+    // Usamos el slug para navegar a la página del evento
+    navigate(`/eventos/${event.slug}`)
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    })
+  }
+
+  return (
+    <Box sx={{ width: 300, p: 1, fontFamily: 'Inter, sans-serif' }}>
+      {/* 1. Título del Evento (en grande y cian) */}
+      <Typography
+        variant='h6'
+        component='h3'
+        sx={{ fontWeight: 700, color: 'var(--color-cadetblue)', mb: 1.5 }}
+      >
+        {event.title}
+      </Typography>
+
+      {/* 2. Info Rápida (Fecha, Ubicación, Asistentes) */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+        <CalendarTodayIcon sx={{ fontSize: 18, color: 'var(--Gray-700)' }} />
+        <Typography variant='body2'>{formatDate(event.start_date)}</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+        <LocationOnIcon sx={{ fontSize: 18, color: 'var(--Gray-700)' }} />
+        <Typography variant='body2' sx={{ flex: 1 }}>
+          {event.is_online
+            ? 'Online'
+            : `${event.venue_city}, ${event.venue_community}`}
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+        <GroupIcon sx={{ fontSize: 18, color: 'var(--Gray-700)' }} />
+        <Typography variant='body2'>
+          {event.current_attendees} asistentes
+        </Typography>
+      </Box>
+
+      <Divider sx={{ my: 1 }} />
+
+      {/* 3. Breve Descripción */}
+      <Typography
+        variant='body2'
+        sx={{ mb: 2, color: 'var(--Gray-700)', fontStyle: 'italic' }}
+      >
+        {event.short_desc}
+      </Typography>
+
+      {/* 4. Tags (limitado a 3 para que quepan) */}
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+        {event.tags.slice(0, 3).map((tag) => (
+          <Chip
+            key={tag}
+            label={tag}
+            size='small'
+            sx={{
+              backgroundColor: 'var(--Gray-100)',
+              color: 'var(--Gray-700)',
+              fontSize: '0.75rem'
+            }}
+          />
+        ))}
+      </Box>
+
+      {/* 5. Botón de Acción */}
+      <Button
+        variant='contained'
+        fullWidth
+        onClick={handleNavigate}
+        sx={{
+          borderRadius: '25px',
+          background: 'var(--gradient-button-primary)',
+          '&:hover': {
+            background: 'var(--gradient-button-primary-hover)'
+          }
+        }}
+      >
+        Ver Evento
+      </Button>
+    </Box>
+  )
 }
 
+// --- COMPONENTE PRINCIPAL DEL MAPA (Modificado) ---
 export const EventMap: React.FC<EventMapProps> = ({ events }) => {
   // Centramos el mapa en España
   const mapCenter: [number, number] = [40.416775, -3.70379]
@@ -15,7 +122,7 @@ export const EventMap: React.FC<EventMapProps> = ({ events }) => {
   return (
     <Box
       sx={{
-        height: '936px',
+        height: '836px',
         width: '100%',
         maxWidth: '1340px',
         borderRadius: '25px',
@@ -43,26 +150,11 @@ export const EventMap: React.FC<EventMapProps> = ({ events }) => {
               <Marker
                 key={event.id}
                 position={[event.latitude, event.longitude]}
+                icon={customMarkerIcon} // <-- USAMOS EL ICONO PERSONALIZADO
               >
                 <Popup>
-                  <Box sx={{ padding: '8px' }}>
-                    <Typography
-                      variant='h6'
-                      component='div'
-                      sx={{ fontWeight: 700 }}
-                    >
-                      {event.title}
-                    </Typography>
-                    <Typography variant='body2' sx={{ mt: 1 }}>
-                      {event.venue_city}
-                    </Typography>
-                    <Typography variant='body2' sx={{ mt: 1 }}>
-                      {new Date(event.start_date).toLocaleDateString('es-ES', {
-                        day: '2-digit',
-                        month: 'long'
-                      })}
-                    </Typography>
-                  </Box>
+                  {/* USAMOS EL COMPONENTE PERSONALIZADO */}
+                  <EventPopupContent event={event} />
                 </Popup>
               </Marker>
             )
