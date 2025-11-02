@@ -8,21 +8,21 @@ import { type ISourceOptions } from 'tsparticles-engine'
 export const DynamicBackground: React.FunctionComponent = () => {
   const options: ISourceOptions = useMemo(
     () => ({
-      // --- ¡AQUÍ ESTÁ EL CAMBIO! ---
-      // Volvemos a usar la opción nativa de la librería
+      // --- ESTA ES LA OPCIÓN CLAVE ---
+      // Le decimos a la librería que ocupe toda la pantalla
       fullScreen: {
         enable: true,
-        zIndex: 0 // Lo pone en la base, pero visible
+        zIndex: 0 // La pondrá en la base (z-index: 0)
       },
-      // --- FIN DEL CAMBIO ---
+      // --- FIN DE LA CLAVE ---
 
-      // Mantenemos el fondo blanco que definimos antes
+      // Le decimos que su fondo sea blanco
       background: {
         color: {
           value: '#ffffff' // var(--White)
         }
       },
-      // Mantenemos los colores visibles
+      // Le decimos que las partículas sean cian y las líneas grises
       particles: {
         color: {
           value: '#4fbac8' // var(--color-cadetblue)
@@ -34,6 +34,7 @@ export const DynamicBackground: React.FunctionComponent = () => {
           opacity: 0.4,
           width: 1
         },
+        // ... (resto de la configuración de movimiento, número, etc.) ...
         move: {
           direction: 'none',
           enable: true,
@@ -80,7 +81,7 @@ export const DynamicBackground: React.FunctionComponent = () => {
   }, [])
 
   // --- ¡AQUÍ ESTÁ EL CAMBIO! ---
-  // Eliminamos todos los 'style' que pusimos manualmente
+  // El componente se renderiza SIN la prop 'style'
   return <Particles id='tsparticles' init={init} options={options} />
   // --- FIN DEL CAMBIO ---
 }
