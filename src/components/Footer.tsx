@@ -18,8 +18,11 @@ export const Footer: FunctionComponent = () => {
         clipPath: 'ellipse(150% 85% at 50% 100%)',
         // Damos padding para que el contenido no se corte
         pt: { xs: 8, md: 10 },
-        pb: 6
+        pb: 6,
         // --- FIN NUEVA FORMA ---
+        // --- 2. ASEGURAR APILAMIENTO ---
+        position: 'relative',
+        zIndex: 1
       }}
     >
       <Container

@@ -1,24 +1,19 @@
 // src/components/DynamicBackground.tsx
 import React, { useMemo, useCallback } from 'react'
-// --- CAMBIO IMPORTANTE ---
 import { Particles } from '@tsparticles/react'
-// --- FIN CAMBIO ---
 import { type Engine } from 'tsparticles-engine'
-// --- CAMBIO IMPORTANTE ---
 import { loadSlim } from '@tsparticles/slim'
-// --- FIN CAMBIO ---
 import { type ISourceOptions } from 'tsparticles-engine'
 
 export const DynamicBackground: React.FunctionComponent = () => {
-  // Memoizamos la configuración para no recalcularla en cada render
   const options: ISourceOptions = useMemo(
     () => ({
-      // Lo configuramos para que ocupe toda la pantalla
-      fullScreen: {
-        enable: true,
-        zIndex: -1 // <-- ¡Clave! Lo pone por detrás del contenido
-      },
-      // El fondo del canvas en sí es transparente
+      // --- CAMBIO ---
+      // Eliminamos 'fullScreen' y 'zIndex'
+      // El componente se posicionará vía 'style'
+      // --- FIN CAMBIO ---
+
+      // El fondo del canvas es transparente
       background: {
         color: {
           value: 'transparent'
@@ -26,13 +21,12 @@ export const DynamicBackground: React.FunctionComponent = () => {
       },
       // Partículas (los "puntos")
       particles: {
-        // Usamos el color cian de tu proyecto (var(--color-cadetblue))
+        // ... (el resto de la configuración de particles se mantiene igual) ...
         color: {
           value: '#4fbac8'
         },
-        // Las líneas que conectan los puntos
         links: {
-          color: '#d5d7da', // (var(--Gray-300))
+          color: '#d5d7da',
           distance: 150,
           enable: true,
           opacity: 0.4,
@@ -45,14 +39,14 @@ export const DynamicBackground: React.FunctionComponent = () => {
             default: 'out'
           },
           random: false,
-          speed: 1, // Velocidad de movimiento
+          speed: 1,
           straight: false
         },
         number: {
           density: {
             enable: true
           },
-          value: 80 // Cantidad de partículas
+          value: 80
         },
         opacity: {
           value: 0.5
@@ -64,7 +58,7 @@ export const DynamicBackground: React.FunctionComponent = () => {
           value: { min: 1, max: 3 }
         }
       },
-      // Desactivamos la interactividad para que sea sutil y eficiente
+      // Desactivamos la interactividad
       interactivity: {
         events: {
           onHover: {
@@ -80,11 +74,26 @@ export const DynamicBackground: React.FunctionComponent = () => {
     []
   )
 
-  // Usamos useCallback para la función de inicialización
   const init = useCallback(async (engine: Engine) => {
-    // Cargamos el preset "slim"
     await loadSlim(engine)
   }, [])
 
-  return <Particles id='tsparticles' init={init} options={options} />
+  // --- CAMBIO ---
+  // Añadimos el 'style' para posicionar el canvas
+  return (
+    <Particles
+      id='tsparticles'
+      init={init}
+      options={options}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0 // Lo dejamos en la base del layout
+      }}
+    />
+  )
+  // --- FIN CAMBIO ---
 }

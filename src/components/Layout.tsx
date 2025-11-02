@@ -20,6 +20,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       sx={{
         width: '100%',
         position: 'relative',
+        backgroundColor: 'var(--White)', // <-- 1. DEVOLVER EL FONDO BLANCO
         overflowX: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -48,7 +49,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           // --- LÓGICA REVERTIDA ---
           // Volvemos al margen de 80px (el header plano)
           // El Hero ya tiene su propio padding para compensar esto.
-          mt: isLandingPage ? 0 : '80px'
+          mt: isLandingPage ? 0 : '80px',
+          // --- 2. ASEGURAR APILAMIENTO ---
+          position: 'relative',
+          zIndex: 1
         }}
       >
         {children || <Outlet />}
