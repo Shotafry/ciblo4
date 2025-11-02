@@ -49,7 +49,7 @@ export let mockEvents: Event[] = [
     venue_name: 'Palacio de Congresos',
     venue_address: 'Paseo de la Castellana, 99',
     venue_city: 'Madrid',
-    venue_community: 'Madrid, Comunidad de', // <-- CAMPO AÑADIDO
+    venue_community: 'Comunidad de Madrid', // <-- CAMPO AÑADIDO
     venue_country: 'Spain',
     latitude: 40.452,
     longitude: -3.6922,
