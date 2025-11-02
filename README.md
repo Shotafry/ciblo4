@@ -9,33 +9,51 @@
 
 Este repositorio contiene el frontend del proyecto **CibESphere**, una plataforma sin ánimo de lucro diseñada para unificar y centralizar todos los eventos de ciberseguridad en España, fomentando la comunidad y la visibilidad.
 
-Esta aplicación ha sido recientemente modernizada para utilizar las últimas tecnologías del ecosistema React, garantizando un rendimiento óptimo y una base de código mantenible.
+Esta aplicación ha sido modernizada para utilizar las últimas tecnologías del ecosistema React y se encuentra en un estado funcional avanzado, operando sobre una API 100% simulada.
 
 ## 🚀 Funcionalidades Implementadas
 
-Este proyecto es una aplicación frontend completamente funcional que opera en un **modo de API simulada (mock)**.
+- **Diseño Unificado:**
 
-- **Autenticación Completa:** Sistema de **Login** y **Registro** con manejo de estado global (React Context).
-- **Roles de Usuario:** Diferenciación entre `Asistente` y `Organizador`, con formularios y campos condicionales.
-- **Rutas Protegidas:** Los paneles de usuario y organizador son privados y solo accesibles tras iniciar sesión.
-- **Carga de Datos Optimizada:** Uso de la arquitectura "Data Routers" de React Router v7 para cargar datos a nivel de ruta.
-- **Mapa Interactivo:** Implementación de **React Leaflet** (v5) con marcadores de eventos.
-- **Sistema de Filtros Completo:** Filtrado de eventos por rango de fechas, localización, tags y nivel.
-- **Página de Detalles de Evento:** Vista detallada para cada evento.
-- **Paneles de Usuario y Organizador:** Paneles dedicados para la gestión de suscripciones y eventos.
-- **Diseño Responsive:** La aplicación se adapta a formatos de móvil, tablet y escritorio.
+  - **Hero Section:** Una "Hero section" personalizada en la `LandingPage` con un diseño curvo (`clip-path`).
+  - **Header Híbrido:** El `Header` es transparente sobre el Hero y se vuelve blanco con sombra al hacer scroll.
+  - **Footer Curvo:** Un `Footer` con diseño curvo y gradiente cian que unifica la estética de la aplicación.
+  - **Paleta de Colores:** Estilos unificados en `global.css` para gradientes de botones y elementos principales.
+
+- **Autenticación y Formularios:**
+
+  - **Autenticación Completa:** Sistema de **Login** y **Registro** con `react-hook-form` para validación de datos (ej. email, contraseña).
+  - **Roles de Usuario:** Diferenciación entre `Asistente` y `Organizador`, con formularios y campos condicionales.
+  - **Rutas Protegidas:** Los paneles de usuario y organizador son privados y solo accesibles tras iniciar sesión.
+
+- **Gestión de Eventos (Organizador):**
+
+  - **CRUD de Eventos:** Funcionalidad completa para **Crear** y **Editar** eventos.
+  - **Panel de Organizador:** Vista de estadísticas (eventos, asistentes) y un listado para gestionar (editar/borrar) eventos creados.
+  - **Formularios Dependientes:** Al crear/editar un evento, la lista de "Ciudades" se filtra según la "Comunidad Autónoma" seleccionada.
+
+- **Interactividad (Asistente):**
+  - **Carga de Datos (React Router):** Uso de la arquitectura "Data Routers" de React Router v7. Los datos se cargan a nivel de ruta usando `loader` en `App.tsx`.
+  - **Filtros Avanzados:** Sistema de filtros (fecha, tags, nivel) que utiliza `useSubmit` para actualizar los parámetros de la URL. El `loader` principal lee la URL, haciendo de esta la "fuente de la verdad".
+  - **Flujo de Inscripción:** Funcionalidad real de "Inscribirse a Evento". La acción actualiza el `AuthContext`, guarda el evento en el perfil del usuario y actualiza el contador de asistentes en la API simulada.
+  - **Panel de Usuario:** El usuario puede ver sus eventos inscritos (Favoritos) y cancelar su inscripción.
+  - **Mapa Interactivo:** Implementación de `React Leaflet`.
+    - Los marcadores usan la chincheta por defecto de Leaflet para mayor claridad.
+    - Incluye **Popups personalizados** con un diseño "tech", información clave del evento (título, fecha, asistentes, tags) y un botón para navegar a la página de detalles.
+  - **Manejo de Errores:** La aplicación presenta una página de error personalizada (`ErrorPage.tsx`) si una ruta o un `loader` falla.
 
 ## 🛠️ Stack Tecnológico (Modernizado)
 
-| Categoría            | Tecnología                                     | Versión   |
-| :------------------- | :--------------------------------------------- | :-------- |
-| **Framework**        | [React](https://react.dev/)                    | `~19.2.0` |
-| **Lenguaje**         | [TypeScript](https://www.typescriptlang.org/)  | `~5.2.2`  |
-| **Build Tool**       | [Vite](https://vitejs.dev/)                    | `~5.3.1`  |
-| **Componentes UI**   | [Material-UI (MUI)](https://mui.com/)          | `~7.3.4`  |
-| **Routing**          | [React Router](https://reactrouter.com/)       | `~7.9.5`  |
-| **Mapas**            | [React Leaflet](https://react-leaflet.js.org/) | `~5.0.0`  |
-| **Manejo de Estado** | React Context (API nativa)                     | N/A       |
+| Categoría            | Tecnología                                      | Versión   |
+| :------------------- | :---------------------------------------------- | :-------- |
+| **Framework**        | [React](https://react.dev/)                     | `~19.2.0` |
+| **Lenguaje**         | [TypeScript](https://www.typescriptlang.org/)   | `~5.2.2`  |
+| **Build Tool**       | [Vite](https://vitejs.dev/)                     | `~5.3.1`  |
+| **Componentes UI**   | [Material-UI (MUI)](https://mui.com/)           | `~7.3.4`  |
+| **Routing**          | [React Router](https://reactrouter.com/)        | `~7.9.5`  |
+| **Formularios**      | [React Hook Form](https://react-hook-form.com/) | `~7.51.5` |
+| **Mapas**            | [React Leaflet](https://react-leaflet.js.org/)  | `~5.0.0`  |
+| **Manejo de Estado** | React Context (API nativa)                      | N/A       |
 
 ## 🏁 Cómo Empezar
 
@@ -54,7 +72,7 @@ Este proyecto es una aplicación frontend completamente funcional que opera en u
     ```
 
 2.  **Instalar dependencias:**
-    Este paso instalará todas las librerías necesarias. (Nota: Ya no se requiere el flag `--legacy-peer-deps`).
+    (Nota: Ya no se requiere el flag `--legacy-peer-deps`).
 
     ```bash
     npm install
@@ -71,7 +89,7 @@ Este proyecto es una aplicación frontend completamente funcional que opera en u
 
 ## ⚙️ Modo de API Simulada (Mock)
 
-Actualmente, este proyecto **no necesita un backend** para funcionar. Toda la lógica del servidor (autenticación, obtención de datos, creación de eventos) está simulada localmente.
+Actualmente, este proyecto **no necesita un backend** para funcionar. Toda la lógica del servidor (autenticación, obtención de datos, creación/edición de eventos) está simulada localmente.
 
 - **API Simulada:** La lógica se encuentra en `src/services/apiService.ts`.
 - **Base de Datos Falsa:** Los datos de prueba (usuarios y eventos) están en `src/mocks/db.ts`.
