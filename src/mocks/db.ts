@@ -8,8 +8,7 @@ const org1: OrganizationSummary = {
   name: 'CyberSecurity Spain',
   logo_url: '/CloudEvents-logo-2@2x.png',
   is_verified: true,
-  city: 'Madrid',
-  country: 'Spain'
+  city: 'Madrid'
 }
 const org2: OrganizationSummary = {
   id: 'org-002',
@@ -17,8 +16,7 @@ const org2: OrganizationSummary = {
   name: 'Hackingétic',
   logo_url: '/cyberLogo-gigapixel-art-scale-2-00x-godpix-1@2x.png',
   is_verified: true,
-  city: 'Barcelona',
-  country: 'Spain'
+  city: 'Barcelona'
 }
 const org3: OrganizationSummary = {
   id: 'org-003',
@@ -26,8 +24,7 @@ const org3: OrganizationSummary = {
   name: 'SecurIT All',
   logo_url: '/asturcon-low-1@2x.png',
   is_verified: true,
-  city: 'Sevilla',
-  country: 'Spain'
+  city: 'Sevilla'
 }
 
 // --- EVENTOS ---
@@ -50,7 +47,6 @@ export let mockEvents: Event[] = [
     venue_address: 'Paseo de la Castellana, 99',
     venue_city: 'Madrid',
     venue_community: 'Comunidad de Madrid', // <-- CAMPO AÑADIDO
-    venue_country: 'Spain',
     latitude: 40.452,
     longitude: -3.6922,
     max_attendees: 500,
@@ -113,7 +109,6 @@ export let mockEvents: Event[] = [
     venue_address: 'Campus Universitario, Aula Magna',
     venue_city: 'Barcelona',
     venue_community: 'Cataluña', // <-- CAMPO AÑADIDO
-    venue_country: 'Spain',
     latitude: 41.3851,
     longitude: 2.1734,
     max_attendees: 200,
@@ -146,7 +141,6 @@ export let mockEvents: Event[] = [
     venue_address: 'Plaza de la Contratación, 8',
     venue_city: 'Sevilla',
     venue_community: 'Andalucía', // <-- CAMPO AÑADIDO
-    venue_country: 'Spain',
     latitude: 37.3826,
     longitude: -5.9965,
     max_attendees: 50,

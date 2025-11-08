@@ -108,9 +108,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
                 {/* --- LÍNEA CORREGIDA --- */}
                 {event.is_online
                   ? 'Online'
-                  : `${event.venue_city}, ${
-                      event.venue_community || event.venue_country
-                    }`}
+                  : `${event.venue_city}, ${event.venue_community}`}
                 {/* --- FIN CORRECCIÓN --- */}
               </Typography>
             </Grid>

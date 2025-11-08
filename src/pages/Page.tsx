@@ -128,8 +128,7 @@ const Page: FunctionComponent = () => {
     try {
       const eventData: CreateEventDTO = {
         ...formData,
-        organization_id: user.organization.id,
-        venue_country: 'España'
+        organization_id: user.organization.id
       } as CreateEventDTO
 
       if (isEditMode) {

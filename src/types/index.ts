@@ -54,7 +54,6 @@ export interface OrganizationSummary {
   logo_url: string
   is_verified: boolean
   city: string
-  country: string
 }
 
 // --- TIPOS de EVENTO ---
@@ -75,7 +74,6 @@ export interface Event {
   venue_address?: string
   venue_city?: string
   venue_community?: string
-  venue_country?: string
   latitude?: number
   longitude?: number
   online_url?: string

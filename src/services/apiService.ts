@@ -60,8 +60,7 @@ export const register = (data: RegisterDTO): Promise<AuthResponse> => {
           name: data.organization_name,
           logo_url: '',
           is_verified: false,
-          city: 'Desconocida',
-          country: 'Spain'
+          city: 'Desconocida'
         }
       }
 
